@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Alternativa UTM</title>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+   </head>
+   <body>
+     <script>
+      var traffic_source = "";
+      var traffic_organic = "";
+      var cookieName = "tmp-utm";
+      var referido = document.referrer.split('/')[2];
+
+      if (document.cookie.indexOf(cookieName) === -1) {
+       $.cookie(cookieName, "", {
+           expires: 365  //un anno
+       });
+      }
+      if (referido != 'undefined') {
+          modificarCookie(cookieName, referido);
+      }
+      function modificarCookie(cookieName, procedencia) {
+        //$.cookie(cookieName, procedencia);
+        var valor = $.cookie(cookieName);
+
+        $.each(valor.split(','), function(i, valor) {
+          var urlReferencia = valor.split('(');
+          if(urlReferencia[0].replace(/\s+/, "")  == procedencia.replace(/\s+/, "") ){
+            console.log(urlReferencia[0]+' / '+procedencia);
+          }
+        });
+
+        //$.cookie(cookieName, 'google.com(3), fiddle.jshell.net(4), yahoo(1), directo(20)');
+        //console.log(sumaVista[1]);
+      }
+      //console.log(referido);
+     </script>
+   </body>
+</html>
