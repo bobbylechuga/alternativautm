@@ -11,27 +11,66 @@
       var traffic_organic = "";
       var cookieName = "tmp-utm";
       var referido = document.referrer.split('/')[2];
-
+      var visitaSumada;
+      var tempCookieVal = new Array();
+      var nuevoArray = new Array();
+      var urlReferencia;
+      var iniciarCookie = new Array();
+      var nuevoValor = new Array();
       if (document.cookie.indexOf(cookieName) === -1) {
        $.cookie(cookieName, "", {
            expires: 365  //un anno
        });
       }
-      if (referido != 'undefined') {
+      /*
+      var contenido = ['google.com(3)', 'fiddle.jshell.net(4)', 'yahoo(1)', 'localhost(10)'];
+      $.cookie(cookieName, JSON.stringify(contenido));
+      */
+      if (referido) {
           modificarCookie(cookieName, referido);
+
+      }else {
+        //console.log("Indefinido "+referido);
+        modificarCookie(cookieName, "directo");
+
       }
       function modificarCookie(cookieName, procedencia) {
         //$.cookie(cookieName, procedencia);
-        var valor = $.cookie(cookieName);
+        var contenidoCookie = $.cookie(cookieName);
+        if(contenidoCookie == "") {
+          //console.log("cookie vacia");
+          iniciarCookie = "['"+procedencia+"(0)"+"']";
+          console.log(iniciarCookie);
+          $.cookie(cookieName,  JSON.stringify(iniciarCookie));
+          return;
+        }
 
-        $.each(valor.split(','), function(i, valor) {
-          var urlReferencia = valor.split('(');
-          if(urlReferencia[0].replace(/\s+/, "")  == procedencia.replace(/\s+/, "") ){
-            console.log(urlReferencia[0]+' / '+procedencia);
+        $.each(JSON.parse(contenidoCookie), function(i, valor) {
+          urlReferencia = valor.split('(');
+          var urlReferenciaTrim = urlReferencia[0].replace(/\s+/, "");
+          var procedenciaTrim = procedencia.replace(/\s+/, "");
+          if(urlReferenciaTrim  == procedenciaTrim){
+            visitaSumada = sumarVisita (valor, urlReferencia[0]);
+            //console.log("existe "+urlReferenciaTrim+" -- "+procedenciaTrim+' / '+valor+' / '+visitaSumada+' - '+i);
+            nuevoArray = contenidoCookie.replace(valor, visitaSumada);
+            console.log(nuevoArray);
+            $.cookie(cookieName, nuevoArray);
+          }else {
+
           }
+
         });
 
-        //$.cookie(cookieName, 'google.com(3), fiddle.jshell.net(4), yahoo(1), directo(20)');
+        //$.cookie(cookieName, tempCookieVal);
+
+        function sumarVisita (valorextraido, referencia) {
+          var  str1 = valorextraido.replace ( /[^\d.]/g, '' );
+          total = parseInt(str1) + 1;
+          visitaSumadaConca = referencia+'('+total+')';
+          return visitaSumadaConca;
+        }
+
+
         //console.log(sumaVista[1]);
       }
       //console.log(referido);
