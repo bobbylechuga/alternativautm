@@ -7,8 +7,6 @@
    </head>
    <body>
      <script>
-      var traffic_source = "";
-      var traffic_organic = "";
       var cookieName = "tmp-utm";
       var referido = document.referrer.split('/')[2];
       var visitaSumada;
@@ -19,6 +17,7 @@
       var nuevoValor = new Array();
       var contenidoCookie = new Array();
       var agregarConteCookie = new Array();
+      var args;
       if (document.cookie.indexOf(cookieName) === -1) {
        $.cookie(cookieName, "", {
            expires: 365  //un anno
@@ -28,13 +27,18 @@
       var contenido = ['google.com(3)', 'fiddle.jshell.net(4)', 'yahoo(1)', 'localhost(10)'];
       $.cookie(cookieName, JSON.stringify(contenido));
       */
+
+      var tieneUtm = capanna("utm");
+
       if (referido) {
-          modificarCookie(cookieName, referido);
-
+          if (tieneUtm === true) {
+            modificarCookie(cookieName, "campanaUTM");
+            console.log("tiene campaña");
+          }else {
+            modificarCookie(cookieName, referido);
+          }
       }else {
-        //console.log("Indefinido "+referido);
         modificarCookie(cookieName, "directo");
-
       }
       function modificarCookie(cookieName, procedencia) {
         //$.cookie(cookieName, procedencia);
@@ -65,15 +69,25 @@
 
         //$.cookie(cookieName, tempCookieVal);
 
-        function sumarVisita (valorextraido, referencia) {
-          var  str1 = valorextraido.replace ( /[^\d.]/g, '' );
-          total = parseInt(str1) + 1;
-          visitaSumadaConca = referencia+'('+total+')';
-          return visitaSumadaConca;
-        }
+
 
 
         //console.log(sumaVista[1]);
+      }
+      function sumarVisita (valorextraido, referencia) {
+        var  str1 = valorextraido.replace ( /[^\d.]/g, '' );
+        total = parseInt(str1) + 1;
+        visitaSumadaConca = referencia+'('+total+')';
+        return visitaSumadaConca;
+      }
+      function capanna(args) {
+        var field = args;
+        var url = window.location.href;
+        if(url.indexOf('?' + field + '=') != -1)
+            return true;
+        else if(url.indexOf('&' + field + '=') != -1)
+            return true;
+        return false;
       }
       //console.log(referido);
      </script>
